@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres_odoo
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      POSTGRES_DB: odoo_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - erdnet
+
+  dbeaver:
+    image: dbeaver/cloudbeaver:latest
+    container_name: dbeaver_ui
+    ports:
+      - "8080:8978"
+    environment:
+      - CB_SERVER_NAME=DBeaver
+    depends_on:
+      - postgres
+    networks:
+      - erdnet
+
+  dbvisualizer:
+    image: kurron/docker-dbvisualizer
+    container_name: dbvisualizer_ui
+    ports:
+      - "8090:8080"
+    depends_on:
+      - postgres
+    networks:
+      - erdnet
+
+volumes:
+  postgres_data:
+
+networks:
+  erdnet:
